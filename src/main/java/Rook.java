@@ -1,7 +1,8 @@
+import java.util.Scanner;
+
 public class Rook {
-    public static void main(String[] args) {
-        String botName = "Rook";
-        String logo = """
+    static String botName = "Rook";
+    static String logo = """
                 \t___ ___ ___
                 \t| |_| |_| |
                 \t \\       /
@@ -10,14 +11,37 @@ public class Rook {
                 \t  |_____|
                 \t /-------\\
                 \t|_________|""";
-        String partition = "------------------------------------------";
+    static String partition = "------------------------------------------";
+
+    public static void main(String[] args) {
         System.out.println(partition);
-        System.out.println("Hello, I am " + botName + "!");
+        ChatGreeting();
+        ChatEcho();
+    }
+
+    static void ChatGreeting() {
+        System.out.println("Greetings, my Lord, I am " + botName + "!");
         System.out.println(logo);
-        System.out.println("What can I do for you?");
+        System.out.println("How may I serve you?");
         System.out.println(partition);
-        System.out.println("Bye. Hope to see you again soon!");
-        System.out.println(partition);
+    }
+
+    static void ChatEcho() {
+        String exitMessage = "bye";
+        while (true) {
+            Scanner scanner = new Scanner(System.in);
+            String command = scanner.nextLine();
+            if (command.equals(exitMessage)) {
+                System.out.println(partition);
+                System.out.println("Farewell, my Lord!");
+                System.out.println(partition);
+                break;
+            } else {
+                System.out.println(partition);
+                System.out.println(command);
+                System.out.println(partition);
+            }
+        }
     }
 }
 
