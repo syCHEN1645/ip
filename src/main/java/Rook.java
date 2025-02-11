@@ -49,28 +49,33 @@ public class Rook {
             chatBadCommand();
             return;
         }
-        switch (cmd) {
-        case LIST_COMMAND:
-            chatShowList(message);
-            break;
-        case UNMARK_COMMAND:
-            chatUnmarkDone(message);
-            break;
-        case MARK_COMMAND:
-            chatMarkDone(message);
-            break;
-        case ADD_TODO_COMMAND:
-            chatAddTodo(message);
-            break;
-        case ADD_DEADLINE_COMMAND:
-            chatAddDeadline(message);
-            break;
-        case ADD_EVENT_COMMAND:
-            chatAddEvent(message);
-            break;
-        default:
-            chatBadCommand();
+        try {
+            switch (cmd) {
+            case LIST_COMMAND:
+                chatShowList(message);
+                break;
+            case UNMARK_COMMAND:
+                chatUnmarkDone(message);
+                break;
+            case MARK_COMMAND:
+                chatMarkDone(message);
+                break;
+            case ADD_TODO_COMMAND:
+                chatAddTodo(message);
+                break;
+            case ADD_DEADLINE_COMMAND:
+                chatAddDeadline(message);
+                break;
+            case ADD_EVENT_COMMAND:
+                chatAddEvent(message);
+                break;
+            default:
+                chatBadCommand();
+            }
+        } catch (RookException e) {
+            e.printErrorMessage();
         }
+
     }
 
     private static void chatBadCommand() {
@@ -100,12 +105,21 @@ public class Rook {
                 && convertStringToInt(words[1]) <= tasks.size();
     }
 
-    private static void chatMarkDone(String message) {
-        if (!isValidMarkCommand(message)) {
-            chatBadCommand();
-            return;
+    private static void chatMarkDone(String message) throws InvalidInfoException, MissingInfoException {
+        // Given there is at least a 1st word "list"
+        String[] words = message.split(" ");
+
+        if (words.length < 2) {
+            throw new MissingInfoException();
+        } else if (words.length > 2) {
+            throw new InvalidInfoException();
         }
-        int index = convertStringToInt(message.split(" ")[1]);
+
+        int index = convertStringToInt(words[1]);
+        if (index <= 0) {
+            throw new InvalidInfoException();
+        }
+
         tasks.get(index - 1).setDone(true);
         System.out.println(PARTITION);
         System.out.println(tasks.get(index - 1));
