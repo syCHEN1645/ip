@@ -1,6 +1,8 @@
 public class RookException extends Exception {
-    protected String errorMessage = "";
+    public RookException(String errorMessage) {
+        super(errorMessage);
+    }
     public void printErrorMessage() {
-        System.out.println(errorMessage);
+        System.out.println(getMessage());
     }
 }

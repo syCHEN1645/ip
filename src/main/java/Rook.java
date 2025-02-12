@@ -75,7 +75,7 @@ public class Rook {
         } catch (RookException e) {
             e.printErrorMessage();
         }
-
+        // System.out.println("Hi");
     }
 
     private static void chatBadCommand() {
@@ -98,15 +98,30 @@ public class Rook {
         return result;
     }
 
-    private static boolean isValidMarkCommand(String message) {
-        // given this is a mark/unmark command
+    private static void chatMarkDone(String message) throws RookException {
+        // Given there is at least a 1st word "mark"
         String[] words = message.split(" ");
-        return words.length == 2 && convertStringToInt(words[1]) > 0
-                && convertStringToInt(words[1]) <= tasks.size();
+
+        if (1 > words.length - 1) {
+            throw new MissingInfoException();
+        } else if (1 < words.length - 1) {
+            throw new InvalidInfoException();
+        }
+
+        int index = convertStringToInt(words[1]);
+        if (index <= 0 || index > tasks.size()) {
+            throw new InvalidInfoException();
+        }
+
+        tasks.get(index - 1).setDone(true);
+        System.out.println(PARTITION);
+        System.out.println(tasks.get(index - 1));
+        System.out.println("My lord, Activity " + index + " has been marked under your command!");
+        System.out.println(PARTITION);
     }
 
-    private static void chatMarkDone(String message) throws InvalidInfoException, MissingInfoException {
-        // Given there is at least a 1st word "list"
+    private static void chatUnmarkDone(String message) throws RookException {
+        // Given there is at least a 1st word "unmark"
         String[] words = message.split(" ");
 
         if (words.length < 2) {
@@ -120,19 +135,6 @@ public class Rook {
             throw new InvalidInfoException();
         }
 
-        tasks.get(index - 1).setDone(true);
-        System.out.println(PARTITION);
-        System.out.println(tasks.get(index - 1));
-        System.out.println("My lord, Activity " + index + " has been marked under your command!");
-        System.out.println(PARTITION);
-    }
-
-    private static void chatUnmarkDone(String message) {
-        if (!isValidMarkCommand(message)) {
-            chatBadCommand();
-            return;
-        }
-        int index = convertStringToInt(message.split(" ")[1]);
         tasks.get(index - 1).setDone(false);
         System.out.println(PARTITION);
         System.out.println(tasks.get(index - 1));
@@ -140,17 +142,13 @@ public class Rook {
         System.out.println(PARTITION);
     }
 
-    private static boolean isValidTodoCommand(String message) {
-        // given this is a todo command
-        // format: todo description
-        return message.split(" ").length > 1;
-    }
-
-    private static void chatAddTodo(String message) {
-        if (!isValidTodoCommand(message)) {
-            chatBadCommand();
-            return;
+    private static void chatAddTodo(String message) throws RookException {
+        // Given there is at least a 1st word "todo"
+        String[] words = message.split(" ");
+        if (words.length < 2) {
+            throw new MissingInfoException();
         }
+
         System.out.println(PARTITION);
 
         String description = message.replaceFirst(Command.ADD_TODO_COMMAND.getCmd(), "").strip();
@@ -161,91 +159,122 @@ public class Rook {
         System.out.println(PARTITION);
     }
 
-    private static boolean isValidDeadlineCommand(String message) {
-        // given this is a deadline command
-        // format: deadline description /by time
-        String[] words = message.split(" ");
-
-        for (int i = 0; i < words.length; i++) {
-            if (words[i].equals("/by") && i >= 2) {
-                // byTime is now found, and there are at least 2 words before (cmd + description)
-                return true;
-            }
+    private static Deadline convertMessageToDeadline(String[] words, int indexByTime) {
+        StringBuilder description = new StringBuilder();
+        StringBuilder byTime = new StringBuilder();
+        for (int i = 1; i < indexByTime; i++) {
+            description.append(words[i]);
+            description.append(" ");
         }
-        return false;
+        for (int i = indexByTime + 1; i < words.length; i++) {
+            byTime.append(words[i]);
+            byTime.append(" ");
+        }
+        return new Deadline(description.toString().strip(), byTime.toString().strip());
     }
 
-    private static void chatAddDeadline(String message) {
-        if (!isValidDeadlineCommand(message)) {
-            chatBadCommand();
-            return;
+    private static void chatAddDeadline(String message) throws RookException {
+        // Given there is at least a 1st word "deadline"
+        String[] words = message.split(" ");
+        int indexByTime = -1;
+        for (int i = 0; i < words.length; i++) {
+            if (words[i].equals("/by")) {
+                indexByTime = i;
+                break;
+            }
         }
-        System.out.println(PARTITION);
+        // Case no description
+        if (indexByTime == 1) {
+            throw new MissingInfoException();
+        }
+        // Case no "/by"
+        if (indexByTime == -1) {
+            throw new MissingKeywordException();
+        }
+        // Case no byTime
+        if (indexByTime >= words.length - 1) {
+            throw new MissingInfoException();
+        }
 
-        String[] parts = message.replaceFirst(Command.ADD_DEADLINE_COMMAND.getCmd(), "").split("/by");
-        String description = parts[0].strip();
-        String byTime = "";
-        if (parts.length > 1) {
-            byTime = parts[1].strip();
-        }
-        Deadline task = new Deadline(description, byTime);
+        Deadline task = convertMessageToDeadline(words, indexByTime);
         tasks.add(task);
-
+        System.out.println(PARTITION);
         System.out.println(task + " is added.");
         System.out.println(PARTITION);
     }
 
-    private static boolean isValidEventCommand(String message) {
-        // given this is an event command
-        // format: event description /from startTime /to endTime
-        String[] words = message.split(" ");
-
-        boolean flagFrom = false;
-        for (int i = 0; i < words.length; i++) {
-            if (words[i].equals("/from") && i >= 2) {
-                // fromTime is now found, and there are at least 2 words before (cmd + description)
-                flagFrom = true;
-            } else if (flagFrom && words[i].equals("/to")) {
-                // fromTime exists, and toTime is now found
-                return true;
-            }
+    private static Event convertMessageToEvent(String[] words, int indexFromTime, int indexToTime) {
+        StringBuilder description = new StringBuilder();
+        StringBuilder fromTime = new StringBuilder();
+        StringBuilder toTime = new StringBuilder();
+        for (int i = 1; i < indexFromTime; i++) {
+            description.append(words[i]);
+            description.append(" ");
         }
-        return false;
+        for (int i = indexFromTime + 1; i < indexToTime; i++) {
+            fromTime.append(words[i]);
+            fromTime.append(" ");
+        }
+        for (int i = indexToTime + 1; i < words.length; i++) {
+            toTime.append(words[i]);
+            toTime.append(" ");
+        }
+        return new Event(
+                description.toString().strip(),
+                fromTime.toString().strip(),
+                toTime.toString().strip()
+        );
     }
 
-    private static void chatAddEvent(String message) {
-        if (!isValidEventCommand(message)) {
-            chatBadCommand();
-            return;
+    private static void chatAddEvent(String message) throws RookException {
+        String[] words = message.split(" ");
+        int indexFromTime = -1;
+        int indexToTime = -1;
+        for (int i = 0; i < words.length; i++) {
+            if (words[i].equals("/from")) {
+                indexFromTime = i;
+                break;
+            }
         }
-        System.out.println(PARTITION);
-
-        String[] parts = message.replaceFirst(Command.ADD_DEADLINE_COMMAND.getCmd(), "").split("/from");
-        String description = parts[0].strip();
-
-        String[] times = parts[1].replaceFirst("/from", "").split("/to");
-        String fromTime = times[0];
-        String toTime = "";
-        if (times.length > 1) {
-            toTime = times[1].strip();
+        for (int i = 0; i < words.length; i++) {
+            if (words[i].equals("/to")) {
+                indexToTime = i;
+                break;
+            }
+        }
+        // Case no description
+        if (indexFromTime == 1) {
+            throw new MissingInfoException();
+        }
+        // Case no "/from" or "/to"
+        if (indexFromTime == -1 || indexToTime == -1) {
+            throw new MissingKeywordException();
+        }
+        // Case "/from" is after "/to"
+        if (indexFromTime > indexToTime) {
+            throw new InvalidInfoException();
+        }
+        // Case no fromTime
+        if (indexFromTime + 1 == indexToTime) {
+            throw new MissingInfoException();
+        }
+        // Case no toTime
+        if (indexToTime + 1 == words.length - 1) {
+            throw new MissingInfoException();
         }
 
-        Event task = new Event(description, fromTime, toTime);
+        Event task = convertMessageToEvent(words, indexFromTime, indexToTime);
         tasks.add(task);
-
+        System.out.println(PARTITION);
         System.out.println(task + " is added.");
         System.out.println(PARTITION);
     }
 
-    private static boolean isValidListCommand(String message) {
-        return message.equals(Command.LIST_COMMAND.getCmd());
-    }
-
-    private static void chatShowList(String message) {
-        if (!isValidListCommand(message)) {
-            chatBadCommand();
-            return;
+    private static void chatShowList(String message) throws RookException {
+        if (!message.equals(Command.LIST_COMMAND.getCmd())) {
+            throw new InvalidInfoException();
         }
+
         System.out.println(PARTITION);
         if (tasks.isEmpty()) {
             System.out.println("You have no task, my Lord.");
