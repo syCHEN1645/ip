@@ -1,7 +1,16 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+
+import Rook.Command.Command;
+import Rook.Exception.InvalidInfoException;
+import Rook.Exception.MissingInfoException;
+import Rook.Exception.MissingKeywordException;
+import Rook.Exception.RookException;
+import Rook.Task.Deadline;
+import Rook.Task.Event;
+import Rook.Task.Task;
+import Rook.Task.Todo;
 
 public class Rook {
     static final String BOT_NAME = "Rook";
@@ -138,7 +147,7 @@ public class Rook {
         tasks.get(index - 1).setDone(false);
         System.out.println(PARTITION);
         System.out.println(tasks.get(index - 1));
-        System.out.println("My lord, Task " + index + " has been unmarked under your command!");
+        System.out.println("My lord, Rook.Task.Task " + index + " has been unmarked under your command!");
         System.out.println(PARTITION);
     }
 

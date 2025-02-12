@@ -1,3 +1,5 @@
+package Rook.Command;
+
 public enum Command {
     ADD_TODO_COMMAND("todo"),
     ADD_EVENT_COMMAND("event"),

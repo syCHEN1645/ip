@@ -1,4 +1,6 @@
-public class Event extends Todo{
+package Rook.Task;
+
+public class Event extends Todo {
     protected String startTime;
     protected String endTime;
     protected final String INITIAL = "[E]";

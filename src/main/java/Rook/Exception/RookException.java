@@ -1,3 +1,5 @@
+package Rook.Exception;
+
 public class RookException extends Exception {
     public RookException(String errorMessage) {
         super(errorMessage);
