@@ -12,17 +12,44 @@ import Rook.Task.Todo;
 
 public class FileManager {
     private File saveFile;
-    private String filePath = "";
+    private final String FOLDER_PATH = "./data";
+    private final String FILE_PATH = "./data/saved.txt";
     private final String DIVIDER = "\\";
 
-    public Task readTask(String line) throws IOException {
-        FileReader reader = new FileReader(saveFile);
-        return null;
+    public FileManager() {
+        try {
+            new File(FOLDER_PATH).mkdir();
+            saveFile = new File(FILE_PATH);
+            if (saveFile.createNewFile()) {
+                System.out.println("File created: " + saveFile.getName());
+            } else {
+                System.out.println("File already exists.");
+            }
+        } catch (IOException e) {
+            System.out.println("An error occurred creating file.");
+        }
     }
+
+    public File getSaveFile() {
+        return saveFile;
+    }
+
+    public void setSaveFile(File saveFile) {
+        this.saveFile = saveFile;
+    }
+
+    public String getFILEPATH() {
+        return FILE_PATH;
+    }
+
+    //    public Task readTask(String line) throws IOException {
+//        FileReader reader = new FileReader(saveFile);
+//        // while ()
+//        return null;
+//    }
 
     public void writeTask(Task task) throws IOException {
         FileWriter writer = new FileWriter(saveFile, true);
-
         if (task.getClass() == Todo.class) {
             writer.write(((Todo) task).getINITIAL() + DIVIDER
                     + ((Todo) task).getDescription() + DIVIDER

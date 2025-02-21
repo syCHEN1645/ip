@@ -7,6 +7,10 @@ public class Todo extends Task {
         super(description);
     }
 
+    public String getINITIAL() {
+        return INITIAL;
+    }
+
     @Override
     public String toString() {
         if (isDone()) {

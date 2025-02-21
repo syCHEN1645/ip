@@ -27,6 +27,10 @@ public class Event extends Todo {
         this.endTime = endTime;
     }
 
+    public String getINITIAL() {
+        return INITIAL;
+    }
+
     @Override
     public String toString() {
         if (isDone) {

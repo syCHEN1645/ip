@@ -17,6 +17,10 @@ public class Deadline extends Todo {
         this.byTime = byTime;
     }
 
+    public String getINITIAL() {
+        return INITIAL;
+    }
+
     @Override
     public String toString() {
         if (isDone) {
