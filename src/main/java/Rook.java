@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -11,6 +12,7 @@ import Rook.Task.Deadline;
 import Rook.Task.Event;
 import Rook.Task.Task;
 import Rook.Task.Todo;
+import Rook.FileManager;
 
 public class Rook {
     static final String BOT_NAME = "Rook";
@@ -26,10 +28,13 @@ public class Rook {
     static final String PARTITION = "------------------------------------------";
 
 
-    static List<Task> tasks = new ArrayList<>();
+    static List<Task> tasks;
     static Scanner scanner = new Scanner(System.in);
+    static FileManager fileManager = new FileManager();
 
     public static void main(String[] args) {
+        loadSavedData();
+
         System.out.println(PARTITION);
         chatGreeting();
 
@@ -41,6 +46,13 @@ public class Rook {
             }
             executeCommand(message);
         }
+    }
+
+    private static void loadSavedData() {
+        tasks = fileManager.readTask();
+//        if (tasks == null) {
+//            tasks = new ArrayList<>();
+//        }
     }
 
     private static Command identifyCommand(String word) {
@@ -86,7 +98,6 @@ public class Rook {
         } catch (RookException e) {
             e.printErrorMessage();
         }
-        // System.out.println("Hi");
     }
 
     private static void chatBadCommand() {
@@ -165,6 +176,11 @@ public class Rook {
         String description = message.replaceFirst(Command.ADD_TODO_COMMAND.getCmd(), "").strip();
         Todo task = new Todo(description);
         tasks.add(task);
+        try {
+            fileManager.writeTask(task);
+        } catch (IOException e) {
+            System.out.println("Failed to add.");
+        }
 
         System.out.println(task + " is added.");
         System.out.println(PARTITION);
@@ -209,6 +225,11 @@ public class Rook {
 
         Deadline task = convertMessageToDeadline(words, indexByTime);
         tasks.add(task);
+        try {
+            fileManager.writeTask(task);
+        } catch (IOException e) {
+            System.out.println("Failed to add.");
+        }
         System.out.println(PARTITION);
         System.out.println(task + " is added.");
         System.out.println(PARTITION);
@@ -270,12 +291,17 @@ public class Rook {
             throw new MissingInfoException();
         }
         // Case no toTime
-        if (indexToTime + 1 == words.length - 1) {
+        if (indexToTime == words.length - 1) {
             throw new MissingInfoException();
         }
 
         Event task = convertMessageToEvent(words, indexFromTime, indexToTime);
         tasks.add(task);
+        try {
+            fileManager.writeTask(task);
+        } catch (IOException e) {
+            System.out.println("Failed to add.");
+        }
         System.out.println(PARTITION);
         System.out.println(task + " is added.");
         System.out.println(PARTITION);
