@@ -3,7 +3,7 @@ package Rook.Task;
 public class Event extends Todo {
     protected String startTime;
     protected String endTime;
-    protected final String INITIAL = "[E]";
+    protected static final String INITIAL = "[E]";
 
     public Event(String description, String startTime, String endTime) {
         super(description);
@@ -25,6 +25,10 @@ public class Event extends Todo {
 
     public void setEndTime(String endTime) {
         this.endTime = endTime;
+    }
+
+    public static String getINITIAL() {
+        return INITIAL;
     }
 
     @Override

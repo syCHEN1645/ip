@@ -1,10 +1,14 @@
 package Rook.Task;
 
 public class Todo extends Task {
-    protected final String INITIAL = "[T]";
+    protected static final String INITIAL = "[T]";
 
     public Todo(String description) {
         super(description);
+    }
+
+    public static String getINITIAL() {
+        return INITIAL;
     }
 
     @Override
