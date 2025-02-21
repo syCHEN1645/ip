@@ -4,7 +4,7 @@ public class Task {
     protected String description;
     protected final String FINISH = "[X]";
     protected final String N_FINISH = "[ ]";
-    protected final String INITIAL = "[ ]";
+    protected static final String INITIAL = "[ ]";
     protected boolean isDone;
 
     public Task(String description) {
@@ -28,7 +28,7 @@ public class Task {
         isDone = done;
     }
 
-    public String getINITIAL() {
+    public static String getINITIAL() {
         return INITIAL;
     }
 

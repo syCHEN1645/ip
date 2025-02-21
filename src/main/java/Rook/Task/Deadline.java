@@ -2,7 +2,7 @@ package Rook.Task;
 
 public class Deadline extends Todo {
     protected String byTime;
-    protected final String INITIAL = "[D]";
+    protected static final String INITIAL = "[D]";
 
     public Deadline(String description, String byTime) {
         super(description);
@@ -17,7 +17,7 @@ public class Deadline extends Todo {
         this.byTime = byTime;
     }
 
-    public String getINITIAL() {
+    public static String getINITIAL() {
         return INITIAL;
     }
 

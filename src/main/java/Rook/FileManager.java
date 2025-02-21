@@ -1,9 +1,10 @@
 package Rook;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 import Rook.Task.Deadline;
 import Rook.Task.Event;
@@ -14,7 +15,11 @@ public class FileManager {
     private File saveFile;
     private final String FOLDER_PATH = "./data";
     private final String FILE_PATH = "./data/saved.txt";
-    private final String DIVIDER = "\\";
+    private final String DIVIDER = "/";
+    private final String TRUE = "true";
+    private final String FALSE = "false";
+
+    private Scanner scanner;
 
     public FileManager() {
         try {
@@ -25,6 +30,7 @@ public class FileManager {
             } else {
                 System.out.println("File already exists.");
             }
+            scanner = new Scanner(saveFile);
         } catch (IOException e) {
             System.out.println("An error occurred creating file.");
         }
@@ -42,25 +48,48 @@ public class FileManager {
         return FILE_PATH;
     }
 
-    //    public Task readTask(String line) throws IOException {
-//        FileReader reader = new FileReader(saveFile);
-//        // while ()
-//        return null;
-//    }
+    private Task convertToTask(String line) {
+        Task task;
+        String[] data = line.split(DIVIDER);
+        if (data[0].equals(Event.getINITIAL())) {
+            task = new Event(data[1], data[3], data[4]);
+            task.setDone((data[2].equals(TRUE)));
+        } else if (data[0].equals(Deadline.getINITIAL())) {
+            task = new Deadline(data[1], data[3]);
+            task.setDone((data[2].equals(TRUE)));
+        } else if (data[0].equals(Todo.getINITIAL())) {
+            task = new Todo(data[1]);
+            task.setDone((data[2].equals(TRUE)));
+        } else {
+            task = null;
+        }
+        return task;
+    }
+
+    public ArrayList<Task> readTask() {
+        ArrayList<Task> tasks = new ArrayList<>();
+        while (scanner.hasNext()) {
+            Task task = convertToTask(scanner.nextLine());
+            if (task != null) {
+                tasks.add(task);
+            }
+        }
+        return tasks;
+    }
 
     public void writeTask(Task task) throws IOException {
         FileWriter writer = new FileWriter(saveFile, true);
         if (task.getClass() == Todo.class) {
-            writer.write(((Todo) task).getINITIAL() + DIVIDER
+            writer.write(Todo.getINITIAL() + DIVIDER
                     + ((Todo) task).getDescription() + DIVIDER
                     + ((Todo) task).isDone());
         } else if (task.getClass() == Deadline.class) {
-            writer.write(((Deadline) task).getINITIAL() + DIVIDER
+            writer.write(Deadline.getINITIAL() + DIVIDER
                     + ((Deadline) task).getDescription() + DIVIDER
                     + ((Deadline) task).isDone() + DIVIDER
                     + ((Deadline) task).getByTime());
         } else if (task.getClass() == Event.class) {
-            writer.write(((Event) task).getINITIAL() + DIVIDER
+            writer.write(Event.getINITIAL() + DIVIDER
                     + ((Event) task).getDescription() + DIVIDER
                     + ((Event) task).isDone() + DIVIDER
                     + ((Event) task).getStartTime() + DIVIDER

@@ -28,11 +28,13 @@ public class Rook {
     static final String PARTITION = "------------------------------------------";
 
 
-    static List<Task> tasks = new ArrayList<>();
+    static List<Task> tasks;
     static Scanner scanner = new Scanner(System.in);
     static FileManager fileManager = new FileManager();
 
     public static void main(String[] args) {
+        loadSavedData();
+
         System.out.println(PARTITION);
         chatGreeting();
 
@@ -44,6 +46,13 @@ public class Rook {
             }
             executeCommand(message);
         }
+    }
+
+    private static void loadSavedData() {
+        tasks = fileManager.readTask();
+//        if (tasks == null) {
+//            tasks = new ArrayList<>();
+//        }
     }
 
     private static Command identifyCommand(String word) {
@@ -87,7 +96,6 @@ public class Rook {
         } catch (RookException e) {
             e.printErrorMessage();
         }
-        // System.out.println("Hi");
     }
 
     private static void chatBadCommand() {
