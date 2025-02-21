@@ -90,6 +90,8 @@ public class Rook {
             case ADD_EVENT_COMMAND:
                 chatAddEvent(message);
                 break;
+            case DELETE_COMMAND:
+                chatDeleteTask(message);
             default:
                 chatBadCommand();
             }
@@ -303,6 +305,28 @@ public class Rook {
         System.out.println(PARTITION);
         System.out.println(task + " is added.");
         System.out.println(PARTITION);
+    }
+
+    private static void chatDeleteTask(String message) throws RookException {
+        // Given there is at least a 1st word "delete"
+        String[] words = message.split(" ");
+
+        if (1 > words.length - 1) {
+            throw new MissingInfoException();
+        } else if (1 < words.length - 1) {
+            throw new InvalidInfoException();
+        }
+
+        int index = convertStringToInt(words[1]);
+        if (index <= 0 || index > tasks.size()) {
+            throw new InvalidInfoException();
+        }
+
+        System.out.println(PARTITION);
+        System.out.println(tasks.get(index - 1));
+        System.out.println("My lord, Activity " + index + " has ceased to exist!");
+        System.out.println(PARTITION);
+        tasks.remove(index - 1);
     }
 
     private static void chatShowList(String message) throws RookException {

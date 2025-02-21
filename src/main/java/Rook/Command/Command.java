@@ -8,7 +8,8 @@ public enum Command {
     EXIT_COMMAND("bye"),
     LIST_COMMAND("list"),
     UNMARK_COMMAND("unmark"),
-    MARK_COMMAND("mark");
+    MARK_COMMAND("mark"),
+    DELETE_COMMAND("delete");
 
     private String cmd;
 
