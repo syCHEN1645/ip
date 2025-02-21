@@ -28,6 +28,10 @@ public class Task {
         isDone = done;
     }
 
+    public String getINITIAL() {
+        return INITIAL;
+    }
+
     @Override
     public String toString() {
         return INITIAL + " " + getDescription();
