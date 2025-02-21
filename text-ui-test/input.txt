@@ -1,2 +1,9 @@
 list
+deadline do homework /by yesterday
+todo eat rice
+list
+delete 5
+delete 1
+mark 1
+list
 bye
