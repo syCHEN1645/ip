@@ -92,6 +92,7 @@ public class Rook {
                 break;
             case DELETE_COMMAND:
                 chatDeleteTask(message);
+                break;
             default:
                 chatBadCommand();
             }
@@ -326,6 +327,7 @@ public class Rook {
         System.out.println(tasks.get(index - 1));
         System.out.println("My lord, Activity " + index + " has ceased to exist!");
         System.out.println(PARTITION);
+        fileManager.deleteTask(index);
         tasks.remove(index - 1);
     }
 

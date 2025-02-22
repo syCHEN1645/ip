@@ -1,9 +1,11 @@
 package Rook;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import Rook.Task.Deadline;
@@ -19,8 +21,6 @@ public class FileManager {
     private final String TRUE = "true";
     private final String FALSE = "false";
 
-    private Scanner scanner;
-
     public FileManager() {
         try {
             new File(FOLDER_PATH).mkdir();
@@ -30,7 +30,6 @@ public class FileManager {
             } else {
                 System.out.println("File already exists.");
             }
-            scanner = new Scanner(saveFile);
         } catch (IOException e) {
             System.out.println("An error occurred creating file.");
         }
@@ -68,11 +67,16 @@ public class FileManager {
 
     public ArrayList<Task> readTask() {
         ArrayList<Task> tasks = new ArrayList<>();
-        while (scanner.hasNext()) {
-            Task task = convertToTask(scanner.nextLine());
-            if (task != null) {
-                tasks.add(task);
+        try {
+            Scanner scanner = new Scanner(saveFile);
+            while (scanner.hasNext()) {
+                Task task = convertToTask(scanner.nextLine());
+                if (task != null) {
+                    tasks.add(task);
+                }
             }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
         }
         return tasks;
     }
@@ -97,5 +101,34 @@ public class FileManager {
         }
         writer.write(System.lineSeparator());
         writer.close();
+    }
+
+    public void deleteTask(int index) {
+        List<String> tasks = new ArrayList<>();
+        int counter = 1;
+        try {
+            Scanner scanner = new Scanner(saveFile);
+            while (scanner.hasNext()) {
+                if (counter != index) {
+                    tasks.add(scanner.nextLine());
+                } else {
+                    scanner.nextLine();
+                }
+                counter++;
+            }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            FileWriter writer = new FileWriter(saveFile);
+            // write data back to the file
+            for (String line: tasks) {
+                writer.write(line + System.lineSeparator());
+            }
+            writer.close();
+        } catch (IOException e) {
+            throw new RuntimeException();
+        }
     }
 }
