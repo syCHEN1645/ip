@@ -120,15 +120,16 @@ public class Rook {
     private static void chatMarkDone(String message) throws RookException {
         // Given there is at least a 1st word "mark"
         String[] words = message.split(" ");
+        int len = 2;
 
-        if (NEXT > words.length - 1) {
+        if (words.length < len) {
             throw new MissingInfoException();
-        } else if (NEXT < words.length - 1) {
+        } else if (words.length > len) {
             throw new InvalidInfoException();
         }
 
         int index = convertStringToInt(words[NEXT]);
-        if (index <= 0 || index > tasks.size()) {
+        if (index <= 0 || index >= tasks.size()) {
             throw new InvalidInfoException();
         }
 
@@ -142,15 +143,16 @@ public class Rook {
     private static void chatUnmarkDone(String message) throws RookException {
         // Given there is at least a 1st word "unmark"
         String[] words = message.split(" ");
+        int len = 2;
 
-        if (words.length < 2) {
+        if (words.length < len) {
             throw new MissingInfoException();
-        } else if (words.length > 2) {
+        } else if (words.length > len) {
             throw new InvalidInfoException();
         }
 
-        int index = convertStringToInt(words[1]);
-        if (index <= 0) {
+        int index = convertStringToInt(words[NEXT]);
+        if (index <= 0 || index >= tasks.size()) {
             throw new InvalidInfoException();
         }
 
