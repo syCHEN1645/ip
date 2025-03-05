@@ -1,4 +1,4 @@
-package Rook;
+package rook;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import Rook.Task.Deadline;
-import Rook.Task.Event;
-import Rook.Task.Task;
-import Rook.Task.Todo;
+import rook.task.Deadline;
+import rook.task.Event;
+import rook.task.Task;
+import rook.task.Todo;
 
 public class FileManager {
     private File saveFile;
@@ -48,21 +48,21 @@ public class FileManager {
     }
 
     private Task convertToTask(String line) {
-        Task task;
-        String[] data = line.split(DIVIDER);
-        if (data[0].equals(Event.getINITIAL())) {
-            task = new Event(data[1], data[3], data[4]);
-            task.setDone((data[2].equals(TRUE)));
-        } else if (data[0].equals(Deadline.getINITIAL())) {
-            task = new Deadline(data[1], data[3]);
-            task.setDone((data[2].equals(TRUE)));
-        } else if (data[0].equals(Todo.getINITIAL())) {
-            task = new Todo(data[1]);
-            task.setDone((data[2].equals(TRUE)));
-        } else {
-            task = null;
-        }
-        return task;
+            Task task;
+            String[] data = line.split(DIVIDER);
+            if (data[0].equals(Event.getINITIAL())) {
+                task = new Event(data[1], data[3], data[4]);
+                task.setDone((data[2].equals(TRUE)));
+            } else if (data[0].equals(Deadline.getINITIAL())) {
+                task = new Deadline(data[1], data[3]);
+                task.setDone((data[2].equals(TRUE)));
+            } else if (data[0].equals(Todo.getINITIAL())) {
+                task = new Todo(data[1]);
+                task.setDone((data[2].equals(TRUE)));
+            } else {
+                task = null;
+            }
+            return task;
     }
 
     public ArrayList<Task> readTask() {

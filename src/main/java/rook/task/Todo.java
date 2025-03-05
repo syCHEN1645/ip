@@ -1,4 +1,4 @@
-package Rook.Task;
+package rook.task;
 
 public class Todo extends Task {
     protected static final String INITIAL = "[T]";

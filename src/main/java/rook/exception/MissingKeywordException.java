@@ -1,4 +1,4 @@
-package Rook.Exception;
+package rook.exception;
 
 public class MissingKeywordException extends RookException {
     public MissingKeywordException() {

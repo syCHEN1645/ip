@@ -1,4 +1,4 @@
-package Rook.Exception;
+package rook.exception;
 
 public class MissingInfoException extends RookException {
     public MissingInfoException() {

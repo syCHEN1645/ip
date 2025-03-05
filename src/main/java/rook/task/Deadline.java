@@ -1,4 +1,4 @@
-package Rook.Task;
+package rook.task;
 
 public class Deadline extends Todo {
     protected String byTime;

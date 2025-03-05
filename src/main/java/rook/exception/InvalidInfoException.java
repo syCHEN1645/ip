@@ -1,4 +1,4 @@
-package Rook.Exception;
+package rook.exception;
 
 public class InvalidInfoException extends RookException {
     public InvalidInfoException() {

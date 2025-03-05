@@ -1,4 +1,4 @@
-package Rook.Task;
+package rook.task;
 
 public class Event extends Todo {
     protected String startTime;

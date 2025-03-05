@@ -1,21 +1,20 @@
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import Rook.Command.Command;
-import Rook.Exception.InvalidInfoException;
-import Rook.Exception.MissingInfoException;
-import Rook.Exception.MissingKeywordException;
-import Rook.Exception.RookException;
-import Rook.Task.Deadline;
-import Rook.Task.Event;
-import Rook.Task.Task;
-import Rook.Task.Todo;
-import Rook.FileManager;
+import rook.command.Command;
+import rook.exception.InvalidInfoException;
+import rook.exception.MissingInfoException;
+import rook.exception.MissingKeywordException;
+import rook.exception.RookException;
+import rook.task.Deadline;
+import rook.task.Event;
+import rook.task.Task;
+import rook.task.Todo;
+import rook.FileManager;
 
 public class Rook {
-    static final String BOT_NAME = "Rook";
+    static final String BOT_NAME = "rook";
     static final String LOGO = """
                 \t___ ___ ___
                 \t| |_| |_| |
@@ -26,7 +25,7 @@ public class Rook {
                 \t /-------\\
                 \t|_________|""";
     static final String PARTITION = "------------------------------------------";
-
+    static final int NEXT = 1;
 
     static List<Task> tasks;
     static Scanner scanner = new Scanner(System.in);
@@ -50,9 +49,6 @@ public class Rook {
 
     private static void loadSavedData() {
         tasks = fileManager.readTask();
-//        if (tasks == null) {
-//            tasks = new ArrayList<>();
-//        }
     }
 
     private static Command identifyCommand(String word) {
@@ -125,22 +121,22 @@ public class Rook {
         // Given there is at least a 1st word "mark"
         String[] words = message.split(" ");
 
-        if (1 > words.length - 1) {
+        if (NEXT > words.length - 1) {
             throw new MissingInfoException();
-        } else if (1 < words.length - 1) {
+        } else if (NEXT < words.length - 1) {
             throw new InvalidInfoException();
         }
 
-        int index = convertStringToInt(words[1]);
+        int index = convertStringToInt(words[NEXT]);
         if (index <= 0 || index > tasks.size()) {
             throw new InvalidInfoException();
         }
 
         tasks.get(index - 1).setDone(true);
-        System.out.println(PARTITION);
-        System.out.println(tasks.get(index - 1));
-        System.out.println("My lord, Activity " + index + " has been marked under your command!");
-        System.out.println(PARTITION);
+        printLines(PARTITION,
+                tasks.get(index - 1).toString(),
+                "My lord, Activity " + index + " has been marked under your command!",
+                PARTITION);
     }
 
     private static void chatUnmarkDone(String message) throws RookException {
@@ -159,20 +155,19 @@ public class Rook {
         }
 
         tasks.get(index - 1).setDone(false);
-        System.out.println(PARTITION);
-        System.out.println(tasks.get(index - 1));
-        System.out.println("My lord, Rook.Task.Task " + index + " has been unmarked under your command!");
-        System.out.println(PARTITION);
+        printLines(PARTITION,
+                tasks.get(index - 1).toString(),
+                "My lord, Rook.Task.Task " + index + " has been unmarked under your command!",
+                PARTITION);
     }
 
     private static void chatAddTodo(String message) throws RookException {
         // Given there is at least a 1st word "todo"
         String[] words = message.split(" ");
-        if (words.length < 2) {
+        int minLen = 2;
+        if (words.length < minLen) {
             throw new MissingInfoException();
         }
-
-        System.out.println(PARTITION);
 
         String description = message.replaceFirst(Command.ADD_TODO_COMMAND.getCmd(), "").strip();
         Todo task = new Todo(description);
@@ -180,11 +175,10 @@ public class Rook {
         try {
             fileManager.writeTask(task);
         } catch (IOException e) {
-            System.out.println("Failed to add.");
+            System.out.println("Failed to write to file.");
         }
 
-        System.out.println(task + " is added.");
-        System.out.println(PARTITION);
+        printLines(PARTITION, task + " is added.", PARTITION);
     }
 
     private static Deadline convertMessageToDeadline(String[] words, int indexByTime) {
@@ -194,7 +188,7 @@ public class Rook {
             description.append(words[i]);
             description.append(" ");
         }
-        for (int i = indexByTime + 1; i < words.length; i++) {
+        for (int i = indexByTime + NEXT; i < words.length; i++) {
             byTime.append(words[i]);
             byTime.append(" ");
         }
@@ -212,15 +206,11 @@ public class Rook {
             }
         }
         // Case no description
-        if (indexByTime == 1) {
-            throw new MissingInfoException();
-        }
         // Case no "/by"
-        if (indexByTime == -1) {
-            throw new MissingKeywordException();
-        }
         // Case no byTime
-        if (indexByTime >= words.length - 1) {
+        if (indexByTime == NEXT ||
+                indexByTime < 0 ||
+                indexByTime >= words.length - 1) {
             throw new MissingInfoException();
         }
 
@@ -231,9 +221,7 @@ public class Rook {
         } catch (IOException e) {
             System.out.println("Failed to add.");
         }
-        System.out.println(PARTITION);
-        System.out.println(task + " is added.");
-        System.out.println(PARTITION);
+        printLines(PARTITION, task + " is added.", PARTITION);
     }
 
     private static Event convertMessageToEvent(String[] words, int indexFromTime, int indexToTime) {
@@ -244,11 +232,11 @@ public class Rook {
             description.append(words[i]);
             description.append(" ");
         }
-        for (int i = indexFromTime + 1; i < indexToTime; i++) {
+        for (int i = indexFromTime + NEXT; i < indexToTime; i++) {
             fromTime.append(words[i]);
             fromTime.append(" ");
         }
-        for (int i = indexToTime + 1; i < words.length; i++) {
+        for (int i = indexToTime + NEXT; i < words.length; i++) {
             toTime.append(words[i]);
             toTime.append(" ");
         }
@@ -276,24 +264,20 @@ public class Rook {
             }
         }
         // Case no description
-        if (indexFromTime == 1) {
+        // Case no fromTime
+        // Case no toTime
+        if (indexFromTime == NEXT ||
+                indexFromTime + NEXT == indexToTime ||
+                indexToTime == words.length - 1) {
             throw new MissingInfoException();
         }
         // Case no "/from" or "/to"
-        if (indexFromTime == -1 || indexToTime == -1) {
+        if (indexFromTime < 0 || indexToTime < 0) {
             throw new MissingKeywordException();
         }
         // Case "/from" is after "/to"
         if (indexFromTime > indexToTime) {
             throw new InvalidInfoException();
-        }
-        // Case no fromTime
-        if (indexFromTime + 1 == indexToTime) {
-            throw new MissingInfoException();
-        }
-        // Case no toTime
-        if (indexToTime == words.length - 1) {
-            throw new MissingInfoException();
         }
 
         Event task = convertMessageToEvent(words, indexFromTime, indexToTime);
@@ -303,30 +287,28 @@ public class Rook {
         } catch (IOException e) {
             System.out.println("Failed to add.");
         }
-        System.out.println(PARTITION);
-        System.out.println(task + " is added.");
-        System.out.println(PARTITION);
+        printLines(PARTITION, task + " is added.", PARTITION);
     }
 
     private static void chatDeleteTask(String message) throws RookException {
         // Given there is at least a 1st word "delete"
         String[] words = message.split(" ");
 
-        if (1 > words.length - 1) {
+        if (NEXT > words.length - 1) {
             throw new MissingInfoException();
-        } else if (1 < words.length - 1) {
+        } else if (NEXT < words.length - 1) {
             throw new InvalidInfoException();
         }
 
-        int index = convertStringToInt(words[1]);
+        int index = convertStringToInt(words[NEXT]);
         if (index <= 0 || index > tasks.size()) {
             throw new InvalidInfoException();
         }
 
-        System.out.println(PARTITION);
-        System.out.println(tasks.get(index - 1));
-        System.out.println("My lord, Activity " + index + " has ceased to exist!");
-        System.out.println(PARTITION);
+        printLines(PARTITION,
+                tasks.get(index - 1).toString(),
+                "My lord, Activity " + index + " has ceased to exist!",
+                PARTITION);
         fileManager.deleteTask(index);
         tasks.remove(index - 1);
     }
@@ -349,16 +331,18 @@ public class Rook {
     }
 
     private static void chatGreeting() {
-        System.out.println("Greetings, my Lord, " + BOT_NAME + " at your service!");
-        System.out.println(LOGO);
-        System.out.println("How may I assist you?");
-        System.out.println(PARTITION);
+        printLines("Greetings, my Lord, " + BOT_NAME + " at your service!",
+                LOGO, "How may I assist you?", PARTITION);
     }
 
     private static void chatBye() {
-        System.out.println(PARTITION);
-        System.out.println("Farewell, my Lord!");
-        System.out.println(PARTITION);
+        printLines(PARTITION, "Farewell, my Lord!", PARTITION);
+    }
+
+    private static void printLines(String... strings) {
+        for (String str: strings) {
+            System.out.println(str);
+        }
     }
 
 }
