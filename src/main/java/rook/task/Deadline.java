@@ -19,13 +19,15 @@ public class Deadline extends Todo {
      * @param description Text description of this <code>Deadline</code> object.
      * @param byTime Deadline time of this task.
      */
-    public Deadline(String description, String byTime) {
+    public Deadline(String description, String byTime, boolean isReminder) {
         super(description);
         setByTime(byTime);
         try {
             LocalDateTime.parse(byTime);
         } catch (DateTimeParseException e) {
-            System.out.println("* Emm, my Lord, non-standard time is given, but I will keep it for now.");
+            if (isReminder) {
+                System.out.println("* Emm, my Lord, non-standard time is given, but I will keep it for now.");
+            }
         }
     }
 

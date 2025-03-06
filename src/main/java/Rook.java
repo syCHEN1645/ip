@@ -214,7 +214,7 @@ public class Rook {
             byTime.append(words[i]);
             byTime.append(" ");
         }
-        return new Deadline(description.toString().strip(), byTime.toString().strip());
+        return new Deadline(description.toString().strip(), byTime.toString().strip(), true);
     }
 
     private static void chatAddDeadline(String message) throws RookException {
