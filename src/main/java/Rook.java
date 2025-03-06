@@ -1,11 +1,8 @@
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 
+import rook.command.Command;
 import rook.exception.InvalidInfoException;
 import rook.exception.MissingInfoException;
 import rook.exception.MissingKeywordException;
@@ -15,7 +12,6 @@ import rook.task.Event;
 import rook.task.Task;
 import rook.task.Todo;
 import rook.FileManager;
-import rook.ui.Command;
 import rook.ui.CommandManager;
 
 public class Rook {
@@ -86,44 +82,12 @@ public class Rook {
             case DELETE_COMMAND:
                 chatDeleteTask(message);
                 break;
-            case FIND_COMMAND:
-                chatFindTask(message);
-                break;
             default:
                 chatBadCommand();
             }
         } catch (RookException e) {
             e.printErrorMessage();
         }
-    }
-
-    private static void chatFindTask(String message) throws RookException {
-        String[] words = message.split(" ");
-        int len = 2;
-
-        if (words.length < len) {
-            throw new MissingInfoException();
-        }
-
-        String component = message.replaceFirst(Command.FIND_COMMAND.getCmd(), "");
-        component = component.strip();
-        HashMap<Integer, Task> matchTasks = new HashMap<>();
-        for (int i = 0; i < tasks.size(); i++) {
-            if (tasks.get(i).getDescription().contains(component)) {
-                matchTasks.put(i + 1, tasks.get(i));
-            }
-        }
-
-        if (matchTasks.isEmpty()) {
-            printLines(PARTITION, "My Lord, I could not find any match.", PARTITION);
-            return;
-        }
-
-        printLines(PARTITION, "My Lord, is this what you are looking for?");
-        for (Integer index: matchTasks.keySet()) {
-            System.out.println(index + ". " + matchTasks.get(index));
-        }
-        System.out.println(PARTITION);
     }
 
     private static void chatBadCommand() {

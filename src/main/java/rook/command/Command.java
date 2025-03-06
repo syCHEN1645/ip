@@ -1,4 +1,4 @@
-package rook.ui;
+package rook.command;
 
 public enum Command {
     ADD_TODO_COMMAND("todo"),

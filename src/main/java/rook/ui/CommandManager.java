@@ -1,6 +1,6 @@
 package rook.ui;
 
-import rook.ui.Command;
+import rook.command.Command;
 import rook.task.Event;
 
 public class CommandManager {
