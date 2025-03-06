@@ -1,5 +1,9 @@
 package rook.ui;
 
+/**
+ * Contains <code>enum</code> that each corresponds to a String command keyword
+ * used in commandline user inputs to <code>Rook</code>.
+ */
 public enum Command {
     ADD_TODO_COMMAND("todo"),
     ADD_EVENT_COMMAND("event"),
@@ -23,6 +27,9 @@ public enum Command {
         this.cmd = cmd;
     }
 
+    /**
+     * @return A <code>String</code> identifier of the command.
+     */
     public String getCmd() {
         return cmd;
     }

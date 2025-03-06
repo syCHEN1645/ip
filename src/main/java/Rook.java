@@ -15,6 +15,10 @@ import rook.task.Todo;
 import rook.FileManager;
 import rook.ui.CommandManager;
 
+/**
+ * Interacts with the user by printing messages and listens to the user's inputs.
+ * Stores and tracks the user's <code>Task</code>s.
+ */
 public class Rook {
     static final String BOT_NAME = "rook";
     static final String LOGO = """
@@ -54,6 +58,12 @@ public class Rook {
     }
 
 
+    /**
+     * Executes different actions based on the command in the input message.
+     * If the message does not contain a valid command, print an error message.
+     *
+     * @param message Input message from the user.
+     */
     private static void executeCommand(String message) {
         Command cmd = CommandManager.identifyCommand(message.split(" ")[0]);
         if (cmd == null) {
@@ -93,7 +103,6 @@ public class Rook {
             e.printErrorMessage();
         }
     }
-
 
     private static void chatFindTask(String message) throws RookException {
         String[] words = message.split(" ");

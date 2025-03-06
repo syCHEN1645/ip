@@ -13,6 +13,11 @@ import rook.task.Event;
 import rook.task.Task;
 import rook.task.Todo;
 
+/**
+ * Manages writing and saving data from the stack to .txt file.
+ * Contains methods that convert information into standardised String format to be
+ * stored and read in .txt file.
+ */
 public class FileManager {
     private File saveFile;
     private final String FOLDER_PATH = "./data";
@@ -21,6 +26,10 @@ public class FileManager {
     private final String TRUE = "true";
     private final String FALSE = "false";
 
+    /**
+     * Constructs a new FileManager. Creates new .txt file in the preset path
+     * if it is not already created.
+     */
     public FileManager() {
         try {
             new File(FOLDER_PATH).mkdir();
@@ -33,18 +42,6 @@ public class FileManager {
         } catch (IOException e) {
             System.out.println("An error occurred creating file.");
         }
-    }
-
-    public File getSaveFile() {
-        return saveFile;
-    }
-
-    public void setSaveFile(File saveFile) {
-        this.saveFile = saveFile;
-    }
-
-    public String getFILEPATH() {
-        return FILE_PATH;
     }
 
     private Task convertToTask(String line) {
@@ -65,6 +62,14 @@ public class FileManager {
             return task;
     }
 
+    /**
+     * Reads from .txt file and constructs tasks from each line of information.
+     * If a line contains invalid information, a null task will be constructed,
+     * but it will not be put into the returning ArrayList.
+     *
+     * @return An ArrayList of tasks containing all valid tasks in .txt file.
+     * @throws RuntimeException If file is not found.
+     */
     public ArrayList<Task> readTask() {
         ArrayList<Task> tasks = new ArrayList<>();
         try {
@@ -81,6 +86,13 @@ public class FileManager {
         return tasks;
     }
 
+    /**
+     * Arranges and writes key parameters of a <code>Task</code> in a specific sequence, divided by
+     * DIVIDER "/". Write each task in a line in .txt file.
+     *
+     * @param task A <code>Task</code> object to be written into file.
+     * @throws IOException If FileWriter fails.
+     */
     public void writeTask(Task task) throws IOException {
         FileWriter writer = new FileWriter(saveFile, true);
         if (task.getClass() == Todo.class) {
@@ -103,6 +115,13 @@ public class FileManager {
         writer.close();
     }
 
+    /**
+     * Delete task at index from file. This index is the same as line number in the file.
+     * e.g. index 3 corresponds to the 3rd line.
+     *
+     * @param index Index of task to be deleted from file.
+     * @throws RuntimeException If FileWriter fails.
+     */
     public void deleteTask(int index) {
         List<String> tasks = new ArrayList<>();
         int counter = 1;
