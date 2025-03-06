@@ -20,7 +20,7 @@ public class Event extends Todo {
      * @param startTime Start-time of this object.
      * @param endTime End-time of this object.
      */
-    public Event(String description, String startTime, String endTime) {
+    public Event(String description, String startTime, String endTime, boolean isReminder) {
         super(description);
         setEndTime(endTime);
         setStartTime(startTime);
@@ -28,7 +28,9 @@ public class Event extends Todo {
             LocalDateTime.parse(startTime);
             LocalDateTime.parse(endTime);
         } catch (DateTimeParseException e) {
-            System.out.println("* Emm, my Lord, non-standard time is given, but I will keep it for now.");
+            if (isReminder) {
+                System.out.println("* Emm, my Lord, non-standard time is given, but I will keep it for now.");
+            }
         }
     }
 

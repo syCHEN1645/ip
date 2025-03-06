@@ -48,10 +48,10 @@ public class FileManager {
             Task task;
             String[] data = line.split(DIVIDER);
             if (data[0].equals(Event.getINITIAL())) {
-                task = new Event(data[1], data[3], data[4]);
+                task = new Event(data[1], data[3], data[4], false);
                 task.setDone((data[2].equals(TRUE)));
             } else if (data[0].equals(Deadline.getINITIAL())) {
-                task = new Deadline(data[1], data[3]);
+                task = new Deadline(data[1], data[3], false);
                 task.setDone((data[2].equals(TRUE)));
             } else if (data[0].equals(Todo.getINITIAL())) {
                 task = new Todo(data[1]);

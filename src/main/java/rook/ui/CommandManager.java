@@ -51,7 +51,8 @@ public class CommandManager {
         return new Event(
                 description.toString().strip(),
                 fromTime.toString().strip(),
-                toTime.toString().strip()
+                toTime.toString().strip(),
+                true
         );
     }
 
