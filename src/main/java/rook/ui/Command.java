@@ -9,7 +9,9 @@ public enum Command {
     LIST_COMMAND("list"),
     UNMARK_COMMAND("unmark"),
     MARK_COMMAND("mark"),
-    DELETE_COMMAND("delete");
+    DELETE_COMMAND("delete"),
+    FIND_COMMAND("find")
+    ;
 
     private String cmd;
 
