@@ -1,5 +1,8 @@
 package rook.task;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
+
 public class Event extends Todo {
     protected String startTime;
     protected String endTime;
@@ -9,6 +12,12 @@ public class Event extends Todo {
         super(description);
         setEndTime(endTime);
         setStartTime(startTime);
+        try {
+            LocalDateTime.parse(startTime);
+            LocalDateTime.parse(endTime);
+        } catch (DateTimeParseException e) {
+            System.out.println("* Emm, my Lord, non-standard time is given, but I will keep it for now.");
+        }
     }
 
     public String getStartTime() {
@@ -35,9 +44,11 @@ public class Event extends Todo {
     public String toString() {
         if (isDone) {
             return INITIAL + FINISH + " " + getDescription()
-                    + " (from: " + getStartTime() + " to: " + getEndTime() + ")";
+                    + " (from: " + convertTimeToString(startTime) +
+                    " to: " + convertTimeToString(endTime) + ")";
         }
         return INITIAL + N_FINISH + " " + getDescription()
-                + " (from: " + getStartTime() + " to: " + getEndTime() + ")";
+                + " (from: " + convertTimeToString(startTime) +
+                " to: " + convertTimeToString(endTime) + ")";
     }
 }
