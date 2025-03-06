@@ -12,6 +12,7 @@ import rook.task.Event;
 import rook.task.Task;
 import rook.task.Todo;
 import rook.FileManager;
+import rook.ui.CommandManager;
 
 public class Rook {
     static final String BOT_NAME = "rook";
@@ -51,17 +52,9 @@ public class Rook {
         tasks = fileManager.readTask();
     }
 
-    private static Command identifyCommand(String word) {
-        for (Command cmd: Command.values()) {
-            if (word.equals(cmd.getCmd())) {
-                return cmd;
-            }
-        }
-        return null;
-    }
 
     private static void executeCommand(String message) {
-        Command cmd = identifyCommand(message.split(" ")[0]);
+        Command cmd = CommandManager.identifyCommand(message.split(" ")[0]);
         if (cmd == null) {
             chatBadCommand();
             return;
@@ -101,22 +94,6 @@ public class Rook {
         System.out.println("I beg you pardon, my Lord?");
     }
 
-    private static int convertStringToInt(String str) {
-        int result = 0;
-        char[] chars = str.toCharArray();
-        int[] digits = new int[chars.length];
-        for (int i = 0; i < chars.length; i++) {
-            digits[i] = Character.digit(chars[i], 10);
-            if (digits[i] < 0) {
-                // if this char is not a number, then return -1
-                return -1;
-            }
-            result *= 10;
-            result += digits[i];
-        }
-        return result;
-    }
-
     private static void chatMarkDone(String message) throws RookException {
         // Given there is at least a 1st word "mark"
         String[] words = message.split(" ");
@@ -128,7 +105,7 @@ public class Rook {
             throw new InvalidInfoException();
         }
 
-        int index = convertStringToInt(words[NEXT]);
+        int index = CommandManager.convertStringToInt(words[NEXT]);
         if (index <= 0 || index >= tasks.size()) {
             throw new InvalidInfoException();
         }
@@ -151,7 +128,7 @@ public class Rook {
             throw new InvalidInfoException();
         }
 
-        int index = convertStringToInt(words[NEXT]);
+        int index = CommandManager.convertStringToInt(words[NEXT]);
         if (index <= 0 || index >= tasks.size()) {
             throw new InvalidInfoException();
         }
@@ -226,29 +203,6 @@ public class Rook {
         printLines(PARTITION, task + " is added.", PARTITION);
     }
 
-    private static Event convertMessageToEvent(String[] words, int indexFromTime, int indexToTime) {
-        StringBuilder description = new StringBuilder();
-        StringBuilder fromTime = new StringBuilder();
-        StringBuilder toTime = new StringBuilder();
-        for (int i = 1; i < indexFromTime; i++) {
-            description.append(words[i]);
-            description.append(" ");
-        }
-        for (int i = indexFromTime + NEXT; i < indexToTime; i++) {
-            fromTime.append(words[i]);
-            fromTime.append(" ");
-        }
-        for (int i = indexToTime + NEXT; i < words.length; i++) {
-            toTime.append(words[i]);
-            toTime.append(" ");
-        }
-        return new Event(
-                description.toString().strip(),
-                fromTime.toString().strip(),
-                toTime.toString().strip()
-        );
-    }
-
     private static void chatAddEvent(String message) throws RookException {
         String[] words = message.split(" ");
         int indexFromTime = -1;
@@ -282,7 +236,7 @@ public class Rook {
             throw new InvalidInfoException();
         }
 
-        Event task = convertMessageToEvent(words, indexFromTime, indexToTime);
+        Event task = CommandManager.convertMessageToEvent(words, indexFromTime, indexToTime);
         tasks.add(task);
         try {
             fileManager.writeTask(task);
@@ -302,7 +256,7 @@ public class Rook {
             throw new InvalidInfoException();
         }
 
-        int index = convertStringToInt(words[NEXT]);
+        int index = CommandManager.convertStringToInt(words[NEXT]);
         if (index <= 0 || index > tasks.size()) {
             throw new InvalidInfoException();
         }
