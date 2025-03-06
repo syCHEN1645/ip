@@ -104,7 +104,6 @@ public class Rook {
         }
     }
 
-
     private static void chatFindTask(String message) throws RookException {
         String[] words = message.split(" ");
         int len = 2;
