@@ -31,7 +31,9 @@ Example:
 ## Adding an event: *event*
 Adds an event with a start and end time.
 
-Format: event <task description> /from <start time> /to <end time>
+Format: 
+
+    event <task description> /from <start time> /to <end time>
 
 Example:
 
